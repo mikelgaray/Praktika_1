@@ -1,10 +1,12 @@
 package klaseak;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 
 public class FilmaZerrenda {
-    private HashMap<Integer, Filmak> filmak;
+    private static HashMap<Integer, Filmak> filmak;
 
     public FilmaZerrenda() {
         this.filmak = new HashMap<>();
@@ -23,5 +25,26 @@ public class FilmaZerrenda {
 
     public Collection<Filmak> getPelikulak() {
         return filmak.values();
+    }
+
+    public boolean lotuAktoreaDagoenFilmari(Aktoreak aktorea, int filmaID) {
+        Filmak dagoenFilma = filmak.get(filmaID);
+        if (dagoenFilma != null) {
+            aktorea.getFilmak().add(dagoenFilma);
+            dagoenFilma.getAktoreak().add(aktorea);
+            return true;
+        }
+        return false;
+    }
+
+    public Filmak sortuEtaLotuFilmaBerria(Aktoreak aktorea, String izenburua, int urtea) {
+        int filmIdBerria = filmak.size() + 1;
+
+        Filmak filmBerria = new Filmak(izenburua, filmIdBerria, urtea, new ArrayList<Aktoreak>());
+        filmak.put(filmBerria.getId(), filmBerria);
+        aktorea.getFilmak().add(filmBerria);
+        filmBerria.getAktoreak().add(aktorea);
+        
+        return filmBerria;
     }
 }

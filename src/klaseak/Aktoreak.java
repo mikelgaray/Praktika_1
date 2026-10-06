@@ -39,8 +39,6 @@ public class Aktoreak {
 
 	@Override
 	public String toString() {
-		return "Aktoreak [izena=" + izena + ", id=" + id + ", filmak=" + filmak + "]";
+		return id + " - " + izena;
 	}
-	
-	
 }

@@ -36,6 +36,7 @@ public class Filmak {
 	}
 
 	public void setUrtea(int urtea) {
+		if (urtea <= 0) throw new IllegalArgumentException("Urte baliogabea: " + urtea);
 		this.urtea = urtea;
 	}
 
@@ -49,7 +50,6 @@ public class Filmak {
 
 	@Override
 	public String toString() {
-		return "Filmak [titulua=" + titulua + ", id=" + id + ", urtea=" + urtea + ", aktoreak=" + aktoreak + "]";
+		return id + " - " + titulua + " (" + urtea + ")";
 	}
-	
 }
