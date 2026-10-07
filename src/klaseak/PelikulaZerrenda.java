@@ -5,75 +5,61 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PelikulaZerrenda {
+public class FilmaZerrenda {
 
-    // Singleton instantzia bakarra
-    private static PelikulaZerrenda nNirePelikulaZerrenda = null;
+    private static FilmaZerrenda nireFilmaZerrenda = null;
+    private List<Filma> zerrenda;
 
-    // Datu-egitura nagusia: O(1) bilaketetarako
-    private Map<String, Filma> filmakIdMap;
-
-    // Eraikitzaile pribatua
-    private PelikulaZerrenda() {
-        this.filmakIdMap = new HashMap<>();
+    public FilmaZerrenda() {
+        this.zerrenda = new ArrayList<>();
     }
 
-    // Instantzia bakarra lortzeko metodo estatikoa
-    public static synchronized PelikulaZerrenda getNirePelikulaZerrenda() {
-        if (nNirePelikulaZerrenda == null) {
-            nNirePelikulaZerrenda = new PelikulaZerrenda();
+    public static FilmaZerrenda getNireFilmaZerrenda() {
+        if (nireFilmaZerrenda == null) {
+            nireFilmaZerrenda = new FilmaZerrenda();
         }
-        return nNirePelikulaZerrenda;
+        return nireFilmaZerrenda;
     }
 
-    /**
-     * Filma berria zerrendan txertatu
-     */
-    public boolean gehituFilma(Filma filma) {
-        if (filma == null || filmakIdMap.containsKey(filma.getId())) {
-            return false;
+    public List<Filma> getZerrenda() {
+        return zerrenda;
+    }
+
+    public void gehitzenFilma(Filma f) {
+        if (f != null && !zerrenda.contains(f)) {
+            zerrenda.add(f);
         }
-        filmakIdMap.put(filma.getId(), filma);
-        return true;
     }
 
-    /**
-     * Filma bilatu bere ID-aren bidez - O(1)
-     */
     public Filma bilatuFilmaIdz(String id) {
-        if (id == null) return null;
-        return filmakIdMap.get(id.trim());
+        for (Filma f : zerrenda) {
+            if (f.getId().equalsIgnoreCase(id.trim())) {
+                return f;
+            }
+        }
+        return null;
     }
 
     /**
-     * Film bateko aktoreen zerrenda lortu (ez inprimatu) - O(1)
+     * Film bateko aktoreak itzultzea (ez inprimatzea)
      */
-    public List<Aktorea> lortuFilmarenAktoreak(String filmId) {
-        Filma f = bilatuFilmaIdz(filmId);
-        return (f != null) ? f.getAktoreak() : Collections.emptyList();
-    }
-
-    /**
-     * Film baten estreinaldi urtea aldatu - O(1)
-     */
-    public boolean aldatuFilmUrtea(String filmId, int urteBerria) {
-        Filma f = bilatuFilmaIdz(filmId);
+    public List<Aktoreak> lortuFilmarenAktoreak(String filmaId) {
+        Filma f = bilatuFilmaIdz(filmaId);
         if (f != null) {
-            f.setUrtea(urteBerria);
+            return f.getAktoreak(); // Aktoreen zerrenda itzultzen du
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * Film baten estreinaldiaren urtea aldatzea
+     */
+    public boolean urteaAldatu(String filmaId, int urteaBerria) {
+        Filma f = bilatuFilmaIdz(filmaId);
+        if (f != null) {
+            f.setUrtea(urteaBerria);
             return true;
         }
         return false;
-    }
-
-    public List<Filma> getFilmaGuztiak() {
-        return new ArrayList<>(filmakIdMap.values());
-    }
-
-    public int getPelikulaKopurua() {
-        return filmakIdMap.size();
-    }
-
-    public void garbitu() {
-        this.filmakIdMap.clear();
     }
 }
