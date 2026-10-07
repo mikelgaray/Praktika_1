@@ -6,52 +6,44 @@ import java.util.Objects;
 import java.util.Set;
 
 public class Filma {
-    private String id;
-    private String izenburua;
-    private int urtea;
-    private Set<Aktorea> aktoreak;
 
-    public Filma(String id, String izenburua, int urtea) {
-        if (id == null || id.trim().isEmpty()) {
-            throw new IllegalArgumentException("Filmaren IDa ezin da hutsa izan.");
+    private String id;        // Wikidata ID / Etiketa
+    private String titulua;   // Filmaren izena
+    private int urtea;        // Estreinaldi urtea
+    private List<Aktoreak> aktoreak;
+
+    public Filma(String id, String titulua, int urtea) {
+        this.id = id;
+        this.titulua = titulua;
+        this.urtea = urtea;
+        this.aktoreak = new ArrayList<>();
+    }
+
+    // Getters eta Setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+
+    public String getTitulua() { return titulua; }
+    public void setTitulua(String titulua) { this.titulua = titulua; }
+
+    public int getUrtea() { return urtea; }
+    public void setUrtea(int urtea) { this.urtea = urtea; }
+
+    public List<Aktoreak> getAktoreak() { return aktoreak; }
+
+    public void gehitzenAktorea(Aktoreak a) {
+        if (a != null && !this.aktoreak.contains(a)) {
+            this.aktoreak.add(a);
         }
-        this.id = id.trim();
-        this.izenburua = (izenburua != null) ? izenburua.trim() : "";
-        this.urtea = urtea;
-        this.aktoreak = new HashSet<>();
     }
 
-    public String getId() {
-        return id;
+    public void ezabatuAktorea(Aktoreak a) {
+        this.aktoreak.remove(a);
     }
 
-    public String getIzenburua() {
-        return izenburua;
-    }
-
-    public int getUrtea() {
-        return urtea;
-    }
-
-    public void setUrtea(int urtea) {
-        this.urtea = urtea;
-    }
-
-    // O(1) konplexutasuna
-    public boolean gehituAktorea(Aktorea aktorea) {
-        if (aktorea == null) return false;
-        return this.aktoreak.add(aktorea);
-    }
-
-    // O(1) konplexutasuna
-    public boolean ezabatuAktorea(Aktorea aktorea) {
-        if (aktorea == null) return false;
-        return this.aktoreak.remove(aktorea);
-    }
-
-    // Kopiatutako zerrenda itzultzen du
-    public List<Aktorea> getAktoreak() {
-        return new ArrayList<>(this.aktoreak);
+    @Override
+    public String toString() {
+        return id + " ### " + titulua + " (" + urtea + ")";
     }
 
     @Override
@@ -65,10 +57,5 @@ public class Filma {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "Filma{id='" + id + "', izenburua='" + izenburua + "', urtea=" + urtea + "}";
     }
 }
