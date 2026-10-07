@@ -3,54 +3,57 @@ package klaseak;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Filmak {
-	private String titulua;
-	private String id;
-	private Date urtea;
-	private ArrayList<Aktoreak> aktoreak;
-	
-	public Filmak(String titulua, String id, Date urtea, ArrayList<Aktoreak> aktoreak) {
-		this.titulua = titulua;
-		this.id = id;
-		this.urtea = urtea;
-		this.aktoreak = aktoreak;
-	}
+public class Filma {
 
-	public String getTitulua() {
-		return titulua;
-	}
+    private String id;        // Wikidata ID / Etiketa
+    private String titulua;   // Filmaren izena
+    private int urtea;        // Estreinaldi urtea
+    private List<Aktoreak> aktoreak;
 
-	public void setTitulua(String titulua) {
-		this.titulua = titulua;
-	}
+    public Filma(String id, String titulua, int urtea) {
+        this.id = id;
+        this.titulua = titulua;
+        this.urtea = urtea;
+        this.aktoreak = new ArrayList<>();
+    }
 
-	public String getId() {
-		return id;
-	}
+    // Getters eta Setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public String getTitulua() { return titulua; }
+    public void setTitulua(String titulua) { this.titulua = titulua; }
 
-	public Date getUrtea() {
-		return urtea;
-	}
+    public int getUrtea() { return urtea; }
+    public void setUrtea(int urtea) { this.urtea = urtea; }
 
-	public void setUrtea(Date urtea) {
-		this.urtea = urtea;
-	}
+    public List<Aktoreak> getAktoreak() { return aktoreak; }
 
-	public ArrayList<Aktoreak> getAktoreak() {
-		return aktoreak;
-	}
+    public void gehitzenAktorea(Aktoreak a) {
+        if (a != null && !this.aktoreak.contains(a)) {
+            this.aktoreak.add(a);
+        }
+    }
 
-	public void setAktoreak(ArrayList<Aktoreak> aktoreak) {
-		this.aktoreak = aktoreak;
-	}
+    public void ezabatuAktorea(Aktoreak a) {
+        this.aktoreak.remove(a);
+    }
 
-	@Override
-	public String toString() {
-		return "Filmak [titulua=" + titulua + ", id=" + id + ", urtea=" + urtea + ", aktoreak=" + aktoreak + "]";
-	}
-	
+    @Override
+    public String toString() {
+        return id + " ### " + titulua + " (" + urtea + ")";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Filma filma = (Filma) o;
+        return Objects.equals(id, filma.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
