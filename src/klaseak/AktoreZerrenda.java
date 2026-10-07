@@ -7,113 +7,157 @@ import java.util.Map;
 
 public class AktoreZerrenda {
 
-    // Singleton instantzia bakarra
-    private static AktoreZerrenda nNireAktoreZerrenda = null;
+    private static AktoreZerrenda nireAktoreZerrenda = null;
+    private List<Aktoreak> zerrenda;
 
-    // Datu-egiturak: O(1) bilaketak ahalbidetzeko
-    private Map<String, Aktorea> aktoreakIdMap;
-    private Map<String, List<Aktorea>> aktoreakIzenaMap;
-
-    // Eraikitzaile pribatua (Singleton patroia)
-    private AktoreZerrenda() {
-        this.aktoreakIdMap = new HashMap<>();
-        this.aktoreakIzenaMap = new HashMap<>();
+    public AktoreZerrenda() {
+        this.zerrenda = new ArrayList<>();
     }
 
-    // Instantzia bakarra lortzeko metodo estatikoa
-    public static synchronized AktoreZerrenda getNireAktoreZerrenda() {
-        if (nNireAktoreZerrenda == null) {
-            nNireAktoreZerrenda = new AktoreZerrenda();
+    public static AktoreZerrenda getNireAktoreZerrenda() {
+        if (nireAktoreZerrenda == null) {
+            nireAktoreZerrenda = new AktoreZerrenda();
         }
-        return nNireAktoreZerrenda;
+        return nireAktoreZerrenda;
     }
 
-    /**
-     * Aktore berria zerrendan txertatu
-     */
-    public boolean gehituAktorea(Aktorea aktorea) {
-        if (aktorea == null || aktoreakIdMap.containsKey(aktorea.getId())) {
-            return false;
+    public List<Aktoreak> getZerrenda() {
+        return zerrenda;
+    }
+
+    // ==================================================================
+    // 1. Datuak fitxategietatik kargatu (Wikidata formatua: "###")
+    // ==================================================================
+    public void kargatuFitxategitik(String fitxategiBidea, int urtea) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fitxategiBidea))) {
+            String lerroa;
+            while ((lerroa = br.readLine()) != null) {
+                if (lerroa.trim().isEmpty()) continue;
+                
+                // Formatu adibidea: Aktore_ID ### Aktore_Izena ### Filma_ID ### Filma_Izena
+                String[] zatiak = lerroa.split("###");
+                if (zatiak.length == 4) {
+                    String aktoreId = zatiak[0].trim();
+                    String aktoreIzena = zatiak[1].trim();
+                    String filmaId = zatiak[2].trim();
+                    String filmaIzena = zatiak[3].trim();
+
+                    // Aktorea bilatu edo sortu
+                    Aktoreak aktorea = bilatuAktoreaIdz(aktoreId);
+                    if (aktorea == null) {
+                        aktorea = new Aktoreak(aktoreId, aktoreIzena);
+                        zerrenda.add(aktorea);
+                    }
+
+                    // Filma bilatu edo sortu
+                    FilmaZerrenda fZerrenda = FilmaZerrenda.getNireFilmaZerrenda();
+                    Filma filma = fZerrenda.bilatuFilmaIdz(filmaId);
+                    if (filma == null) {
+                        filma = new Filma(filmaId, filmaIzena, urtea);
+                        fZerrenda.gehitzenFilma(filma);
+                    }
+
+                    // Bi norabideko harremana ezarri (Aktorea <-> Filma)
+                    aktorea.gehitzenFilma(filma);
+                    filma.gehitzenAktorea(aktorea);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Errorea fitxategia irakurtzean: " + e.getMessage());
         }
-        aktoreakIdMap.put(aktorea.getId(), aktorea);
-        aktoreakIzenaMap.computeIfAbsent(aktorea.getIzena(), k -> new ArrayList<>()).add(aktorea);
-        return true;
     }
 
-    /**
-     * Aktorea bilatu bere ID-aren bidez - O(1)
-     */
-    public Aktorea bilatuAktoreaIdz(String id) {
-        if (id == null) return null;
-        return aktoreakIdMap.get(id.trim());
-    }
-
-    /**
-     * Aktorea(k) bilatu izen-abizenen arabera - O(1)
-     */
-    public List<Aktorea> bilatuAktoreaIzenez(String izenAbizenak) {
-        if (izenAbizenak == null) return Collections.emptyList();
-        List<Aktorea> zerrenda = aktoreakIzenaMap.get(izenAbizenak.trim());
-        if (zerrenda == null) {
-            return Collections.emptyList();
-        }
-        return new ArrayList<>(zerrenda);
-    }
-
-    /**
-     * Aktore baten filmak lortu (ez inprimatu) - O(1)
-     */
-    public List<Filma> lortuAktorearenFilmak(String aktoreId) {
-        Aktorea a = bilatuAktoreaIdz(aktoreId);
-        return (a != null) ? a.getFilmak() : Collections.emptyList();
-    }
-
-    /**
-     * Aktore bat ezabatu eta bere erreferentzia guztiak garbitu - O(k)
-     */
-    public boolean ezabatuAktorea(String aktoreId) {
-        Aktorea aktorea = aktoreakIdMap.remove(aktoreId);
-        if (aktorea == null) {
-            return false;
-        }
-        
-
-        // Izenen mapatik kendu
-        List<Aktorea> izenZerrenda = aktoreakIzenaMap.get(aktorea.getIzena());
-        if (izenZerrenda != null) {
-            izenZerrenda.remove(aktorea);
-            if (izenZerrenda.isEmpty()) {
-                aktoreakIzenaMap.remove(aktorea.getIzena());
+    // ==================================================================
+    // 2. Aktore bat bilatu (ID edo Izen-abizenen arabera)
+    // ==================================================================
+    public Aktoreak bilatuAktoreaIdz(String id) {
+        for (Aktoreak a : zerrenda) {
+            if (a.getId().equalsIgnoreCase(id.trim())) {
+                return a;
             }
         }
+        return null;
+    }
 
-        // Zuzenean parte hartu duen film bakoitzetik ezabatu aktorea
-        for (Filma filma : aktorea.getFilmak()) {
-            filma.ezabatuAktorea(aktorea);
+    public List<Aktoreak> bilatuAktoreaIzenez(String izenAbizena) {
+        List<Aktoreak> aurkituak = new ArrayList<>();
+        String gakoa = gakuaSortu(izenAbizena);
+        for (Aktoreak a : zerrenda) {
+            if (gakuaSortu(a.getIzena()).contains(gakoa)) {
+                aurkituak.add(a);
+            }
         }
-
-        return true;
+        return aurkituak;
     }
 
-    /**
-     * Aktoreen zerrenda izen-abizenez ordenatuta lortu (jatorrizkoa aldatu gabe)
-     */
-    public List<Aktorea> lortuAktoreakOrdenatuta() {
-        List<Aktorea> kopia = new ArrayList<>(aktoreakIdMap.values());
-        Collections.sort(kopia);
-        return kopia;
+    // ==================================================================
+    // 3. Aktore berri bat txertatu
+    // ==================================================================
+    public boolean txertatuAktorea(Aktoreak a) {
+        if (a != null && bilatuAktoreaIdz(a.getId()) == null) {
+            return zerrenda.add(a);
+        }
+        return false;
     }
 
-    public List<Aktorea> getAktoreGuztiak() {
-        return new ArrayList<>(aktoreakIdMap.values());
+    // ==================================================================
+    // 4. Aktore baten filmak itzultzea (ez inprimatzea)
+    // ==================================================================
+    public List<Filma> lortuAktorearenFilmak(String aktoreId) {
+        Aktoreak a = bilatuAktoreaIdz(aktoreId);
+        if (a != null) {
+            return a.getFilmak(); // Filmen zerrenda itzultzen du
+        }
+        return new ArrayList<>();
     }
 
-    public int getAktoreKopurua() {
-        return aktoreakIdMap.size();
+    // ==================================================================
+    // 5. Aktore bat ezabatu
+    // ==================================================================
+    public boolean ezabatuAktorea(String aktoreId) {
+        Aktoreak a = bilatuAktoreaIdz(aktoreId);
+        if (a != null) {
+            // Filmen aktore-zerrendatik erreferentzia kendu
+            for (Filma f : a.getFilmak()) {
+                f.ezabatuAktorea(a);
+            }
+            return zerrenda.remove(a);
+        }
+        return false;
     }
 
-    public void garbitu() {
-        this.aktoreakIdMap.clear();
-        this.aktoreakIzenaMap.clear();
+    // ==================================================================
+    // 6. Zerrenda fitxategi batean gorde
+    // ==================================================================
+    public void gordeFitxategian(String fitxategiBidea) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fitxategiBidea))) {
+            for (Aktoreak a : zerrenda) {
+                for (Filma f : a.getFilmak()) {
+                    bw.write(a.getId() + " ### " + a.getIzena() + " ### " + f.getId() + " ### " + f.getTitulua());
+                    bw.newLine();
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Errorea fitxategia gordetzean: " + e.getMessage());
+        }
+    }
+
+    // ==================================================================
+    // 7. Aktoreen zerrenda ordenatua lortu (jatorrizkoa aldatu gabe)
+    // ==================================================================
+    public List<Aktoreak> lortuAktoreakOrdenatuta() {
+        List<Aktoreak> kopia = new ArrayList<>(this.zerrenda);
+        Collections.sort(kopia, new Comparator<Aktoreak>() {
+            @Override
+            public int compare(Aktoreak a1, Aktoreak a2) {
+                return a1.getIzena().compareToIgnoreCase(a2.getIzena());
+            }
+        });
+        return kopia; // Zerrenda ordenatu berria itzultzen du, jatorrizkoa aldatu gabe
+    }
+
+    public static String gakuaSortu(String testua) {
+        if (testua == null) return "";
+        return testua.trim().toLowerCase();
     }
 }
