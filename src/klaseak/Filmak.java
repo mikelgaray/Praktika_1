@@ -6,11 +6,11 @@ import java.util.List;
 
 public class Filmak {
 	private String titulua;
-	private int id; 
+	private String id; 
 	private int urtea;
 	private ArrayList<Aktoreak> aktoreak;
 	
-	public Filmak(String titulua, int id, int urtea, ArrayList<Aktoreak> aktoreak) {
+	public Filmak(String titulua, String id, int urtea, ArrayList<Aktoreak> aktoreak) {
 		this.titulua = titulua;
 		this.id = id;
 		this.urtea = urtea;
@@ -25,11 +25,11 @@ public class Filmak {
 		this.titulua = titulua;
 	}
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
