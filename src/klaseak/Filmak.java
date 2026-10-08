@@ -6,11 +6,11 @@ import java.util.List;
 
 public class Filmak {
 	private String titulua;
-	private String id; // Wikidatako IDak String izaten dira (adib. "Q117260139")
+	private int id; 
 	private int urtea;
 	private ArrayList<Aktoreak> aktoreak;
 	
-	public Filmak(String titulua, String id, int urtea, ArrayList<Aktoreak> aktoreak) {
+	public Filmak(String titulua, int id, int urtea, ArrayList<Aktoreak> aktoreak) {
 		this.titulua = titulua;
 		this.id = id;
 		this.urtea = urtea;
@@ -25,11 +25,11 @@ public class Filmak {
 		this.titulua = titulua;
 	}
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
