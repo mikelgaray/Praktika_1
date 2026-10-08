@@ -9,7 +9,7 @@ public class Aktoreak {
 	private int id; 
 	private ArrayList<Filmak> filmak;
 	
-	public Aktoreak(String izena, String id, ArrayList<Filmak> filmak) {
+	public Aktoreak(String izena, int id, ArrayList<Filmak> filmak) {
 		this.izena = izena;
 		this.id = id;
 		this.filmak = filmak != null ? filmak : new ArrayList<>();
