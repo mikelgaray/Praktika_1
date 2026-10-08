@@ -36,6 +36,18 @@ public class FilmaZerrenda {
         }
         return false;
     }
+    public boolean lotuAktoreaDagoenFilmari(Aktoreak aktorea, String izenburua) {
+        Filmak dagoenFilma = null;
+        for(Filmak filma : filmak.values()) {
+			if(filma.getTitulua().equalsIgnoreCase(izenburua)) {
+				dagoenFilma = filma;
+		        aktorea.getFilmak().add(dagoenFilma);
+		        dagoenFilma.getAktoreak().add(aktorea);
+		        return true;
+			}
+		}
+        return false;
+    }
 
     public Filmak sortuEtaLotuFilmaBerria(Aktoreak aktorea, String izenburua, int urtea) {
         int maxNumero = 0;

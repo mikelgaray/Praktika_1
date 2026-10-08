@@ -327,11 +327,17 @@ public class Kontrolatzailea {
         if (izena == null || izena.isBlank()) return null;
         return AktoreZerrenda.gordeAktoreBerria(izena);
     }
-    //Lotu aktoreak filmarekin
+    //Lotu aktoreak filmarekin Id
     public boolean aktoreaLotuFilma(Aktoreak aktorea, int filmaID) {
 		zerrendakBaieztatu();
 		if (aktorea == null) return false;
 		return filmaZerrendaGlobala.lotuAktoreaDagoenFilmari(aktorea, filmaID);
+	}
+    //Lotu aktoreak filmarekin Izenburua 
+    public boolean aktoreaLotuFilma(Aktoreak aktorea, String Izenburua) {
+		zerrendakBaieztatu();
+		if (aktorea == null) return false;
+		return filmaZerrendaGlobala.lotuAktoreaDagoenFilmari(aktorea, Izenburua);
 	}
     //Lotu aktoreak filma berriarekin
     public Filmak aktoreaLotuFilmaberria(Aktoreak aktorea, String izenburua, int urtea) {

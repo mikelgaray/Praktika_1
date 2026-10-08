@@ -242,16 +242,26 @@ public class Bistak {
 
             switch (aukera) {
             case "1":
-            	
-            	//Lamar al metodo de mostrar filmak (Opcional)
-                System.out.print("Sartu filmaren IDa (adib. 101-120): ");
-                int filmaID = sarrera.nextInt();
-
-                boolean loturaEginda = kontrolatzailea.aktoreaLotuFilma(aktoreBerria, filmaID);
+            	boolean loturaEginda = false;
+            	System.out.println("Iznburuarekin edo idarekin bilatu nahi duzu? (1. ID, 2. Izenburua)");
+            	int modua = sarrera.nextInt();
+            	if(modua == 1) {
+            		//Lamar al metodo de mostrar filmak (Opcional)
+                     System.out.print("Sartu filmaren IDa: ");
+                     int filmaID = sarrera.nextInt();
+                     loturaEginda = kontrolatzailea.aktoreaLotuFilma(aktoreBerria, filmaID);
+            	}else if(modua == 2) {
+            		//Lamar al metodo de mostrar filmak (Opcional)
+            		System.out.print("Sartu filmaren Izenburua: ");
+                	String filmaIzenburua = sarrera.nextLine();
+                	loturaEginda = kontrolatzailea.aktoreaLotuFilma(aktoreBerria, filmaIzenburua);
+            	}else {
+            		System.out.println("Aukera baliogabea.");
+            	}
                 if (loturaEginda) {
                     System.out.println("Erlazioa sortu da.");
                 } else {
-                    System.out.println("Errorea: Ez da aurkitu ID hori duen filmarik.");
+                    System.out.println("Errorea erlazioa sortzean.");
                 }
                 break;
 
