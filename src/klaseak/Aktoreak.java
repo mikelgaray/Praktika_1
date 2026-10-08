@@ -34,8 +34,9 @@ public class Aktoreak {
 	/**
 	 * AKTORE BATEN FILMAK ITZULI (ez inprimatu)
 	 */
-	public List<Filmak> getFilmak() {
-		return Collections.unmodifiableList(filmak);
+
+	public ArrayList<Filmak> getFilmak() {
+		return filmak;
 	}
 
 	public void setFilmak(ArrayList<Filmak> filmak) {
