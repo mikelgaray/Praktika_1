@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Aktoreak {
 	private String izena;
-	private String id; // Wikidatako IDak String izaten dira (adib. "Q4683087")
+	private int id; 
 	private ArrayList<Filmak> filmak;
 	
 	public Aktoreak(String izena, String id, ArrayList<Filmak> filmak) {
