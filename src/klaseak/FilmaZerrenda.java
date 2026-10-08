@@ -12,9 +12,6 @@ public class FilmaZerrenda {
         FilmaZerrenda.filmak = new HashMap<>();
     }
 
-    /**
-     * FILMA BAT BILATU ID BIDEZ
-     */
     public Filmak getFilma(String id) {
         return filmak.get(id);
     }
