@@ -1,53 +1,55 @@
 package klaseak;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Aktoreak {
+	private String izena;
+	private String id; // Wikidatako IDak String izaten dira (adib. "Q4683087")
+	private ArrayList<Filmak> filmak;
+	
+	public Aktoreak(String izena, String id, ArrayList<Filmak> filmak) {
+		this.izena = izena;
+		this.id = id;
+		this.filmak = filmak != null ? filmak : new ArrayList<>();
+	}
 
-    private String id;       // Wikidata ID / Etiketa
-    private String izena;    // Izen-abizenak
-    private List<Filma> filmak;
+	public String getIzena() {
+		return izena;
+	}
 
-    public Aktoreak(String id, String izena) {
-        this.id = id;
-        this.izena = izena;
-        this.filmak = new ArrayList<>();
-    }
+	public void setIzena(String izena) {
+		this.izena = izena;
+	}
 
-    // Getters eta Setters
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+	public String getId() {
+		return id;
+	}
 
-    public String getIzena() { return izena; }
-    public void setIzena(String izena) { this.izena = izena; }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public List<Filma> getFilmak() { return filmak; }
+	/**
+	 * AKTORE BATEN FILMAK ITZULI (ez inprimatu)
+	 */
+	public List<Filmak> getFilmak() {
+		return Collections.unmodifiableList(filmak);
+	}
 
-    public void gehitzenFilma(Filma f) {
-        if (f != null && !this.filmak.contains(f)) {
-            this.filmak.add(f);
-        }
-    }
+	public void setFilmak(ArrayList<Filmak> filmak) {
+		this.filmak = filmak;
+	}
 
-    public void ezabatuFilma(Filma f) {
-        this.filmak.remove(f);
-    }
+	public void gehituFilma(Filmak f) {
+		if (f != null && !this.filmak.contains(f)) {
+			this.filmak.add(f);
+		}
+	}
 
-    @Override
-    public String toString() {
-        return id + " ### " + izena;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Aktoreak aktoreak = (Aktoreak) o;
-        return Objects.equals(id, aktoreak.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+	@Override
+	public String toString() {
+		return id + " - " + izena;
+	}
 }
