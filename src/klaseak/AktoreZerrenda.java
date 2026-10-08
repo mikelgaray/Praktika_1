@@ -8,7 +8,7 @@ public class AktoreZerrenda {
 	private static final Pattern MARKAK = Pattern.compile("\\p{M}");
 	private static final Pattern HUTSUNEAK = Pattern.compile("\\s+");
 
-	private static HashMap<String, Aktoreak> aktoreak; // id (String, adib. "Q12345") -> aktorea
+	private static HashMap<Integer, Aktoreak> aktoreak; // id (String, adib. "Q12345") -> aktorea
 	private final TreeMap<String, ArrayList<Aktoreak>> izenIndizea; // izen normalizatua -> homonimoak
 
 	public AktoreZerrenda() {
