@@ -23,7 +23,7 @@ public class Aktoreak {
 		this.izena = izena;
 	}
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
