@@ -38,13 +38,23 @@ public class FilmaZerrenda {
     }
 
     public Filmak sortuEtaLotuFilmaBerria(Aktoreak aktorea, String izenburua, int urtea) {
-        int filmIdBerria = filmak.size() + 1;
+        int maxNumero = 0;
+      //int filmIdBerria = filmak.size() + 1; Para pruebas
 
-        Filmak filmBerria = new Filmak(izenburua, filmIdBerria, urtea, new ArrayList<Aktoreak>());
+        for (Filmak filma : filmak.values()) {
+            int numero = Integer.parseInt(filma.getId().substring(1)); 
+            if (numero > maxNumero) {
+                maxNumero = numero;
+            }
+        }
+        String filmIdBerria = "Q" + (maxNumero + 1);
+        Filmak filmBerria = new Filmak(izenburua, filmIdBerria, urtea, new ArrayList<>());
         filmak.put(filmBerria.getId(), filmBerria);
+        
         aktorea.getFilmak().add(filmBerria);
         filmBerria.getAktoreak().add(aktorea);
         
         return filmBerria;
     }
+    
 }

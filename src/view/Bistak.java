@@ -37,7 +37,7 @@ public class Bistak {
             System.out.println("9. Test-datuak sortu (20 aktore eta 20 film)");
             System.out.println("10.Aktoreak ordenatu (mergesort edo quicksort)");
             System.out.println("0. Irten");
-            aukera = irakurriEdukia("Aukera: ", 0, 9);
+            aukera = irakurriEdukia("Aukera: ", 0, 10);
             switch (aukera) {
             	case 2: aktoreaTxertatu(); break;
                 case 5: filmarenAktoreak(); break;

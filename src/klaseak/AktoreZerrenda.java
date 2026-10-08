@@ -75,11 +75,21 @@ public class AktoreZerrenda {
 	}
 
 	// Aktore Berria Txertatu
-	public static Aktoreak gordeAktoreBerria(String izena) {
-		int aktoreIdBerria = aktoreak.size() + 1;
-		Aktoreak aktoreBerria = new Aktoreak(izena, aktoreIdBerria, new ArrayList<Filmak>());
-		aktoreak.put(aktoreIdBerria, aktoreBerria);
-		return aktoreBerria;
+	 public static Aktoreak gordeAktoreBerria(String izena) {
+     int maxNumero = 0;
+     //int aktoreIdBerria = aktoreak.size() + 1; para pruebas
+	
+     for (Aktoreak id : aktoreak.values()) {
+         int numero = Integer.parseInt(id.getId().substring(1));
+         if (numero > maxNumero) {
+             maxNumero = numero;
+         }
+    }
+    String idBerria = "Q" + (maxNumero + 1);
+    Aktoreak aktoreBerria = new Aktoreak(izena, idBerria, new ArrayList<>());
+    aktoreak.put(idBerria, aktoreBerria);
+
+    return aktoreBerria;
 	}
 
 	// MERGESORT Metodoa
