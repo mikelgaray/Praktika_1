@@ -1,59 +1,69 @@
 package klaseak;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collections;
+import java.util.List;
 
-public class Filma {
+public class Filmak {
+	private String titulua;
+	private String id; // Wikidatako IDak String izaten dira (adib. "Q117260139")
+	private int urtea;
+	private ArrayList<Aktoreak> aktoreak;
+	
+	public Filmak(String titulua, String id, int urtea, ArrayList<Aktoreak> aktoreak) {
+		this.titulua = titulua;
+		this.id = id;
+		this.urtea = urtea;
+		this.aktoreak = aktoreak != null ? aktoreak : new ArrayList<>();
+	}
 
-    private String id;        // Wikidata ID / Etiketa
-    private String titulua;   // Filmaren izena
-    private int urtea;        // Estreinaldi urtea
-    private List<Aktoreak> aktoreak;
+	public String getTitulua() {
+		return titulua;
+	}
 
-    public Filma(String id, String titulua, int urtea) {
-        this.id = id;
-        this.titulua = titulua;
-        this.urtea = urtea;
-        this.aktoreak = new ArrayList<>();
-    }
+	public void setTitulua(String titulua) {
+		this.titulua = titulua;
+	}
 
-    // Getters eta Setters
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+	public String getId() {
+		return id;
+	}
 
-    public String getTitulua() { return titulua; }
-    public void setTitulua(String titulua) { this.titulua = titulua; }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public int getUrtea() { return urtea; }
-    public void setUrtea(int urtea) { this.urtea = urtea; }
+	public int getUrtea() {
+		return urtea;
+	}
 
-    public List<Aktoreak> getAktoreak() { return aktoreak; }
+	/**
+	 * FILM BATEN ESTREINALDI URTEA ALDATU
+	 */
+	public void setUrtea(int urtea) {
+		if (urtea <= 0) throw new IllegalArgumentException("Urte baliogabea: " + urtea);
+		this.urtea = urtea;
+	}
 
-    public void gehitzenAktorea(Aktoreak a) {
-        if (a != null && !this.aktoreak.contains(a)) {
-            this.aktoreak.add(a);
-        }
-    }
+	/**
+	 * FILM BATEKO AKTOREAK ITZULI (ez inprimatu)
+	 */
+	public List<Aktoreak> getAktoreak() {
+		return Collections.unmodifiableList(aktoreak);
+	}
 
-    public void ezabatuAktorea(Aktoreak a) {
-        this.aktoreak.remove(a);
-    }
+	public void setAktoreak(ArrayList<Aktoreak> aktoreak) {
+		this.aktoreak = aktoreak;
+	}
 
-    @Override
-    public String toString() {
-        return id + " ### " + titulua + " (" + urtea + ")";
-    }
+	public void gehituAktorea(Aktoreak a) {
+		if (a != null && !this.aktoreak.contains(a)) {
+			this.aktoreak.add(a);
+		}
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Filma filma = (Filma) o;
-        return Objects.equals(id, filma.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+	@Override
+	public String toString() {
+		return id + " - " + titulua + " (" + urtea + ")";
+	}
 }
