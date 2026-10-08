@@ -8,7 +8,7 @@ public class AktoreZerrenda {
 	private static final Pattern MARKAK = Pattern.compile("\\p{M}");
 	private static final Pattern HUTSUNEAK = Pattern.compile("\\s+");
 
-	private static HashMap<Integer, Aktoreak> aktoreak; // id -> aktorea
+	private static HashMap<String, Aktoreak> aktoreak; // id -> aktorea
 	private final TreeMap<String, ArrayList<Aktoreak>> izenIndizea; // izen normalizatua -> homonimoak
 
 	public AktoreZerrenda() {
@@ -26,7 +26,7 @@ public class AktoreZerrenda {
 		return s.toLowerCase(Locale.ROOT);
 	}
 
-	public Aktoreak getAktorea(int id) {
+	public Aktoreak getAktorea(String id) {
 		return aktoreak.get(id);
 	}
 
@@ -40,7 +40,7 @@ public class AktoreZerrenda {
 		return true;
 	}
 
-	public Aktoreak ezabatuAktorea(int id) {
+	public Aktoreak ezabatuAktorea(String id) {
 		Aktoreak a = aktoreak.remove(id);
 		if (a == null)
 			return null;

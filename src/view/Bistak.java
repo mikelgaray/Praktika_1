@@ -105,7 +105,7 @@ public class Bistak {
         int mota = irakurriEdukia("Aukera: ", 1, 2);
         if (mota == 1) {
             int id = irakurriEdukia("Filmaren ID-a: ");
-            Filmak f = kontrolatzailea.filmaBilatu(id);
+            Filmak f = kontrolatzailea.filmaBilatu("Q" + id);
             if (f == null) System.out.println("Ez da filmarik aurkitu ID horrekin.");
             return f;
         }
@@ -138,7 +138,7 @@ public class Bistak {
         int mota = irakurriEdukia("Aukera: ", 1, 2);
         if (mota == 1) {
             int id = irakurriEdukia("Aktorearen ID-a: ");
-            Aktoreak a = kontrolatzailea.aktoreaBilatu(id);
+            Aktoreak a = kontrolatzailea.aktoreaBilatu("Q" + id);
             if (a == null) System.out.println("Ez da aktorerik aurkitu ID horrekin.");
             return a;
         }
@@ -245,7 +245,7 @@ public class Bistak {
             	
             	//Lamar al metodo de mostrar filmak (Opcional)
                 System.out.print("Sartu filmaren IDa (adib. 101-120): ");
-                int filmaID = sarrera.nextInt();
+                String filmaID = "Q" + sarrera.nextInt();
 
                 boolean loturaEginda = kontrolatzailea.aktoreaLotuFilma(aktoreBerria, filmaID);
                 if (loturaEginda) {

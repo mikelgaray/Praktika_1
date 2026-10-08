@@ -6,13 +6,13 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class FilmaZerrenda {
-    private static HashMap<Integer, Filmak> filmak;
+    private static HashMap<String, Filmak> filmak;
 
     public FilmaZerrenda() {
         this.filmak = new HashMap<>();
     }
 
-    public Filmak getFilma(int id) {
+    public Filmak getFilma(String id) {
         return filmak.get(id);
     }
 
@@ -27,7 +27,7 @@ public class FilmaZerrenda {
         return filmak.values();
     }
 
-    public boolean lotuAktoreaDagoenFilmari(Aktoreak aktorea, int filmaID) {
+    public boolean lotuAktoreaDagoenFilmari(Aktoreak aktorea, String filmaID) {
         Filmak dagoenFilma = filmak.get(filmaID);
         if (dagoenFilma != null) {
             aktorea.getFilmak().add(dagoenFilma);

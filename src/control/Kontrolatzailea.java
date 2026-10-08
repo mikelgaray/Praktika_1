@@ -19,7 +19,7 @@ import klaseak.FilmaZerrenda;
 
 public class Kontrolatzailea {
 
-    private static final String WIKIDATA_URL = "http://www.wikidata.org/entity/Q";
+    private static final String WIKIDATA_URL = "http://www.wikidata.org/entity/";
     private static final String BANATZAILEA = "###";
 
     private AktoreZerrenda aktoreZerrendaGlobala;
@@ -43,6 +43,11 @@ public class Kontrolatzailea {
         }
     }
 
+    /** "Q123" -> 123 (ordenaketetarako, ID-a zenbaki bihurtzen da lerro berean) */
+    private static int idZenbakia(String id) {
+        return Integer.parseInt(id.substring(1));
+    }
+
     /** Aktorea eta filma erlazionatzen ditu bi norabidetan (bikoizketarik gabe). */
     private void erlazionatu(Aktoreak a, Filmak f) {
         if (!a.getFilmak().contains(f)) {
@@ -56,7 +61,7 @@ public class Kontrolatzailea {
     // ==================================================================
 
     /** ID bidez aktorea bilatu: O(1). Ez bada existitzen, null. */
-    public Aktoreak aktoreaBilatu(int id) {
+    public Aktoreak aktoreaBilatu(String id) {
         zerrendakBaieztatu();
         return aktoreZerrendaGlobala.getAktorea(id);
     }
@@ -79,13 +84,13 @@ public class Kontrolatzailea {
     // ==================================================================
 
     /** ID bidez filma bilatu: O(1). Ez bada existitzen, null. */
-    public Filmak filmaBilatu(int id) {
+    public Filmak filmaBilatu(String id) {
         zerrendakBaieztatu();
         return filmaZerrendaGlobala.getFilma(id);
     }
     
     // Método alias para mantener la compatibilidad con Bista/Bistak
-    public Filmak pelikulaBilatu(int id) {
+    public Filmak pelikulaBilatu(String id) {
         return filmaBilatu(id);
     }
 
@@ -98,7 +103,7 @@ public class Kontrolatzailea {
         for (Filmak f : filmaZerrendaGlobala.getPelikulak()) {
             if (AktoreZerrenda.gakuaSortu(f.getTitulua()).equals(gakoa)) emaitza.add(f);
         }
-        emaitza.sort((f1, f2) -> Integer.compare(f1.getId(), f2.getId()));
+        emaitza.sort((f1, f2) -> Integer.compare(idZenbakia(f1.getId()), idZenbakia(f2.getId())));
         return emaitza;
     }
 
@@ -118,7 +123,7 @@ public class Kontrolatzailea {
         }
         emaitza.sort((f1, f2) -> {
             int c = f1.getTitulua().compareToIgnoreCase(f2.getTitulua());
-            return c != 0 ? c : Integer.compare(f1.getId(), f2.getId());
+            return c != 0 ? c : Integer.compare(idZenbakia(f1.getId()), idZenbakia(f2.getId()));
         });
         return emaitza.size() > muga ? new ArrayList<>(emaitza.subList(0, muga)) : emaitza;
     }
@@ -133,7 +138,7 @@ public class Kontrolatzailea {
     // ==================================================================
 
     /** Irakurtzeko soilik den ikuspegia; filma ez badago, zerrenda hutsa. */
-    public List<Aktoreak> pelikularenAktoreak(int filmaId) {
+    public List<Aktoreak> pelikularenAktoreak(String filmaId) {
         zerrendakBaieztatu();
         Filmak f = filmaZerrendaGlobala.getFilma(filmaId);
         if (f == null) return Collections.emptyList();
@@ -145,7 +150,7 @@ public class Kontrolatzailea {
     // ==================================================================
 
     /** @return false filma existitzen ez bada */
-    public boolean filmaUrteaAldatu(int filmaId, int urteBerria) {
+    public boolean filmaUrteaAldatu(String filmaId, int urteBerria) {
         zerrendakBaieztatu();
         Filmak f = filmaZerrendaGlobala.getFilma(filmaId);
         if (f == null) return false;
@@ -167,7 +172,7 @@ public class Kontrolatzailea {
         List<Filmak> filmak = new ArrayList<>(filmaZerrendaGlobala.getPelikulak());
         filmak.sort((f1, f2) -> {
             int c = f1.getTitulua().compareToIgnoreCase(f2.getTitulua());
-            return c != 0 ? c : Integer.compare(f1.getId(), f2.getId());
+            return c != 0 ? c : Integer.compare(idZenbakia(f1.getId()), idZenbakia(f2.getId()));
         });
 
         try (BufferedWriter idazlea = Files.newBufferedWriter(helburua, StandardCharsets.UTF_8)) {
@@ -224,17 +229,17 @@ public class Kontrolatzailea {
         zerrendakBaieztatu();
         List<Aktoreak> aktoreak = new ArrayList<>();
         for (int i = 0; i < TEST_AKTOREAK.length; i++) {
-            Aktoreak a = aktoreZerrendaGlobala.getAktorea(i + 1);
+            Aktoreak a = aktoreZerrendaGlobala.getAktorea("Q" + (i + 1));
             if (a == null) {
-                a = new Aktoreak(TEST_AKTOREAK[i], i + 1, new ArrayList<Filmak>());
+                a = new Aktoreak(TEST_AKTOREAK[i], "Q" + (i + 1), new ArrayList<Filmak>());
                 aktoreZerrendaGlobala.gehituAktorea(a);
             }
             aktoreak.add(a);
         }
         for (int j = 0; j < TEST_FILMAK.length; j++) {
-            Filmak f = filmaZerrendaGlobala.getFilma(101 + j);
+            Filmak f = filmaZerrendaGlobala.getFilma("Q" + (101 + j));
             if (f == null) {
-                f = new Filmak(TEST_FILMAK[j], 101 + j, TEST_URTEAK[j], new ArrayList<Aktoreak>());
+                f = new Filmak(TEST_FILMAK[j], "Q" + (101 + j), TEST_URTEAK[j], new ArrayList<Aktoreak>());
                 filmaZerrendaGlobala.setFilma(f);
             }
             for (int posizioa : TEST_ERLAZIOAK[j]) {
@@ -266,13 +271,13 @@ public class Kontrolatzailea {
         long hasiera = System.nanoTime();
         final List<Aktoreak> aktoreak = new ArrayList<>(n);
         for (int i = 0; i < n; i++) {
-            Aktoreak a = new Aktoreak(String.format("Aktore %07d", zenbakiak.get(i)), i + 1, new ArrayList<Filmak>());
+            Aktoreak a = new Aktoreak(String.format("Aktore %07d", zenbakiak.get(i)), "Q" + (i + 1), new ArrayList<Filmak>());
             aktoreZerrendaGlobala.gehituAktorea(a);
             aktoreak.add(a);
         }
         List<Filmak> filmak = new ArrayList<>(m);
         for (int j = 0; j < m; j++) {
-            Filmak f = new Filmak("Film " + j, j + 1, 1900 + rnd.nextInt(120), new ArrayList<Aktoreak>());
+            Filmak f = new Filmak("Film " + j, "Q" + (j + 1), 1900 + rnd.nextInt(120), new ArrayList<Aktoreak>());
             filmaZerrendaGlobala.setFilma(f);
             filmak.add(f);
         }
@@ -285,23 +290,23 @@ public class Kontrolatzailea {
         emaitza.put("Aktorea izenez bilatu [TreeMap, O(log n)]",
                 batezbestekoa(1000, () -> aktoreakBilatu(aktoreak.get(rnd.nextInt(n)).getIzena())));
         emaitza.put("Filma IDz bilatu [HashMap, O(1)]",
-                batezbestekoa(1000, () -> filmaBilatu(1 + rnd.nextInt(m))));
+                batezbestekoa(1000, () -> filmaBilatu("Q" + (1 + rnd.nextInt(m)))));
         emaitza.put("Filma izenez bilatu [zeharkaldi lineala, O(m)]",
                 batezbestekoa(20, () -> filmakBilatu("Film " + rnd.nextInt(m))));
         emaitza.put("Film bateko aktoreak itzuli",
-                batezbestekoa(1000, () -> pelikularenAktoreak(1 + rnd.nextInt(m))));
+                batezbestekoa(1000, () -> pelikularenAktoreak("Q" + (1 + rnd.nextInt(m)))));
         emaitza.put("Film baten urtea aldatu",
-                batezbestekoa(1000, () -> filmaUrteaAldatu(1 + rnd.nextInt(m), 1900 + rnd.nextInt(120))));
+                batezbestekoa(1000, () -> filmaUrteaAldatu("Q" + (1 + rnd.nextInt(m)), 1900 + rnd.nextInt(120))));
 
         final int[] txertatuak = {n};
         emaitza.put("Aktore berria txertatu [TreeMap + HashMap]",
                 batezbestekoa(1000, () -> {
                     int id = ++txertatuak[0];
-                    aktoreZerrendaGlobala.gehituAktorea(new Aktoreak("Berria " + id, id, new ArrayList<Filmak>()));
+                    aktoreZerrendaGlobala.gehituAktorea(new Aktoreak("Berria " + id, "Q" + id, new ArrayList<Filmak>()));
                 }));
         final int[] ezabatuak = {n};
         emaitza.put("Aktorea ezabatu",
-                batezbestekoa(1000, () -> aktoreZerrendaGlobala.ezabatuAktorea(++ezabatuak[0])));
+                batezbestekoa(1000, () -> aktoreZerrendaGlobala.ezabatuAktorea("Q" + (++ezabatuak[0]))));
 
         emaitza.put("Aktoreen zerrenda ordenatua lortu [O(n)]",
                 batezbestekoa(5, () -> aktoreakOrdenatuta()));
@@ -328,7 +333,7 @@ public class Kontrolatzailea {
         return AktoreZerrenda.gordeAktoreBerria(izena);
     }
     //Lotu aktoreak filmarekin
-    public boolean aktoreaLotuFilma(Aktoreak aktorea, int filmaID) {
+    public boolean aktoreaLotuFilma(Aktoreak aktorea, String filmaID) {
 		zerrendakBaieztatu();
 		if (aktorea == null) return false;
 		return filmaZerrendaGlobala.lotuAktoreaDagoenFilmari(aktorea, filmaID);
