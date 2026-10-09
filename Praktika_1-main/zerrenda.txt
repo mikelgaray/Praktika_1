@@ -1,0 +1,6 @@
+=== AKTOREAK (2) ===
+http://www.wikidata.org/entity/Q1 ### Andrea Ba�uelos
+http://www.wikidata.org/entity/Q2 ### Nahia Aguirre
+
+=== FILMAK (1) ===
+http://www.wikidata.org/entity/Q1 ### La bola negra ### 2030
